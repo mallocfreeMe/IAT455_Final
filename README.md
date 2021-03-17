@@ -1,1 +1,1 @@
-# IAT455 Final Project
+# IAT455 UI Project
