@@ -19,14 +19,9 @@ class Final extends Frame {  //controlling class
     int width; //width of the resized image
     int height; //height of the resized image
 
-    BufferedImage color_corrected;
-    BufferedImage paint_changed_mask;
-    BufferedImage newColor_image;
-    BufferedImage paint_mask_refl;
-    BufferedImage shadows;
-    BufferedImage refl;
-    BufferedImage shiny;
-    BufferedImage comp;
+    BufferedImage appleImage;
+    BufferedImage randomBlock;
+    BufferedImage randomImage;
 
     public Final() {
         // constructor
@@ -37,6 +32,7 @@ class Final extends Frame {  //controlling class
             paint_mask = ImageIO.read(new File("painted_areas_mask.jpg")); //2
             reflection_layer = ImageIO.read(new File("reflections_layer.jpg")); //3
             occlusion = ImageIO.read(new File("ambient_occlusion_layer.jpg")); //4
+            appleImage = ImageIO.read(new File("David.png"));
 
         } catch (Exception e) {
             System.out.println("Cannot load the provided image");
@@ -46,6 +42,9 @@ class Final extends Frame {  //controlling class
 
         width = carImage.getWidth();//
         height = carImage.getHeight();//
+
+        randomBlock = David.randomBlock(appleImage,50);
+        randomImage = David.randomImage(appleImage, width/5, height/5, 50);
 
         //Anonymous inner-class listener to terminate program
         this.addWindowListener(
@@ -64,10 +63,10 @@ class Final extends Frame {  //controlling class
 
         this.setSize(w * 5 + 100, h + 80);
 
-        g.drawImage(carImage, 25, 50, w, h, this);
-        g.drawImage(occlusion, 100 + w, 50, w, h, this);
-        g.drawImage(paint_mask, 200 + w * 2, 50, w, h, this);
-        g.drawImage(reflection_layer, 300 + w * 3, 50, w, h, this);
+        g.drawImage(randomBlock, 25, 50, 50,  50, this);
+        g.drawImage(randomImage, 100 + w, 50, w, h, this);
+        g.drawImage(appleImage, 200 + w * 2, 50, w, h, this);
+        g.drawImage(appleImage, 300 + w * 3, 50, w, h, this);
 
         g.setColor(Color.BLACK);
         Font f1 = new Font("Verdana", Font.PLAIN, 13);
