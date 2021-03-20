@@ -18,7 +18,13 @@ class MyFrame extends Frame {
 
     public MyFrame() {
         try {
-            appleImage = ImageIO.read(new File("apple.png"));
+            //appleImage = ImageIO.read(new File("apple.png"));
+            appleImage = ImageIO.read(new File("tomato.png"));
+            //appleImage = ImageIO.read(new File("paragraph.png"));
+            //appleImage = ImageIO.read(new File("bucket.png"));
+            //appleImage = ImageIO.read(new File("chocolate.png"));
+            //appleImage = ImageIO.read(new File("flower.png"));
+
 
         } catch (Exception e) {
             System.out.println("Cannot load the provided image");
@@ -29,8 +35,8 @@ class MyFrame extends Frame {
         width = appleImage.getWidth() * 4;
         height = appleImage.getHeight() * 4;
 
-        randomBlock = ImageQuilting.randomBlock(appleImage, 50);
-        randomImage = ImageQuilting.randomImage(appleImage, width / 5, height / 5, 50);
+        randomBlock = ImageQuilting.randomBlock(appleImage, 10);
+        randomImage = ImageQuilting.randomImage(appleImage, width / 5, height / 5, 10);
 
         this.addWindowListener(
                 new WindowAdapter() {

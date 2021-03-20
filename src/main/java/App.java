@@ -17,12 +17,9 @@ public class App extends JFrame
 
     public App()
     {
-
         add(rootMainScreen);
         setTitle("IAT 455 Final Project");
         setSize(1100, 1200);
-
-
     }
 
 
