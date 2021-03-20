@@ -19,11 +19,11 @@ class MyFrame extends Frame {
     public MyFrame() {
         try {
             //appleImage = ImageIO.read(new File("apple.png"));
-//            appleImage = ImageIO.read(new File("tomato.png"));
-//            appleImage = ImageIO.read(new File("paragraph.png"));
-            appleImage = ImageIO.read(new File("bucket.png"));
+            //appleImage = ImageIO.read(new File("tomato.png"));
+            //appleImage = ImageIO.read(new File("paragraph.png"));
+            //appleImage = ImageIO.read(new File("bucket.png"));
             //appleImage = ImageIO.read(new File("chocolate.png"));
-            //appleImage = ImageIO.read(new File("flower.png"));
+            appleImage = ImageIO.read(new File("flower.png"));
 
 
         } catch (Exception e) {
