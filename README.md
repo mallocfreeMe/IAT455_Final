@@ -1,1 +1,1 @@
-# IAT455 MyFrame Project
+# IAT455 Project
