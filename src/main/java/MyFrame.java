@@ -79,7 +79,7 @@ class MyFrame extends Frame {
         MyFrame frame = new MyFrame();
         frame.setLayout(null);
         frame.repaint();
-//        App app = new App();
-//        app.setVisible(true);
+        App app = new App();
+        app.setVisible(true);
     }
 }
