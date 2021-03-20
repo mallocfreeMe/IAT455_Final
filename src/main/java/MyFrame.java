@@ -7,9 +7,9 @@ import java.lang.String;
 import javax.imageio.ImageIO;
 
 class MyFrame extends Frame {
-    private BufferedImage appleImage;
-    private BufferedImage randomBlock;
-    private BufferedImage randomImage;
+    public BufferedImage appleImage;
+    public BufferedImage randomBlock;
+    public BufferedImage randomImage;
 
     private int width;
     private int height;
@@ -40,7 +40,9 @@ class MyFrame extends Frame {
                 }
         );
 
-        selectFileButton = new Button("Select");
+    }
+
+/*        selectFileButton = new Button("Select");
         generateButton = new Button("Generate");
         this.add(selectFileButton);
         this.add(generateButton);
@@ -56,11 +58,11 @@ class MyFrame extends Frame {
             public void actionPerformed(ActionEvent e) {
             }
         });
-    }
+    }*/
 
-    private void selectFile() {
+    //private void selectFile() {
 
-    }
+    //}
 
     public void paint(Graphics g) {
         int w = width / 5;
@@ -80,13 +82,21 @@ class MyFrame extends Frame {
         g.drawString("2.Select a random block from the source image", 100 + w, 40);
         g.drawString("3.Generate a synthesis image by place random blocks", 205 + w * 2, 40);
 
-        selectFileButton.setBounds(25,270,80,30);
-        generateButton.setBounds(115,270,80,30);
+        //selectFileButton.setBounds(25,270,80,30);
+        //generateButton.setBounds(115,270,80,30);
     }
 
     public static void main(String[] args) {
         MyFrame frame = new MyFrame();
         frame.setLayout(null);
         frame.repaint();
+
+
+        App app = new App();
+        app.setVisible(true);
+
+
+
+
     }
 }

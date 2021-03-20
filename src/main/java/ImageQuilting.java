@@ -3,7 +3,9 @@ import java.awt.image.BufferedImage;
 import java.util.concurrent.ThreadLocalRandom;
 
 
-public class ImageQuilting {
+public class ImageQuilting
+
+{
     // random block
     public static BufferedImage randomBlock(BufferedImage srcImage, int blockSize) {
         int w = srcImage.getWidth();
