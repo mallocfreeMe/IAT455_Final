@@ -19,9 +19,9 @@ class MyFrame extends Frame {
     public MyFrame() {
         try {
             //appleImage = ImageIO.read(new File("apple.png"));
-            appleImage = ImageIO.read(new File("tomato.png"));
-            //appleImage = ImageIO.read(new File("paragraph.png"));
-            //appleImage = ImageIO.read(new File("bucket.png"));
+//            appleImage = ImageIO.read(new File("tomato.png"));
+//            appleImage = ImageIO.read(new File("paragraph.png"));
+            appleImage = ImageIO.read(new File("bucket.png"));
             //appleImage = ImageIO.read(new File("chocolate.png"));
             //appleImage = ImageIO.read(new File("flower.png"));
 
@@ -71,8 +71,8 @@ class MyFrame extends Frame {
     //}
 
     public void paint(Graphics g) {
-        int w = width / 5;
-        int h = height / 5;
+        int w = 500;
+        int h = 500;
 
         this.setSize(w * 4, h + 100);
 
