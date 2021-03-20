@@ -19,11 +19,11 @@ class MyFrame extends Frame {
     public MyFrame() {
         try {
             //appleImage = ImageIO.read(new File("apple.png"));
-            //appleImage = ImageIO.read(new File("tomato.png"));
+            appleImage = ImageIO.read(new File("tomato.png"));
             //appleImage = ImageIO.read(new File("paragraph.png"));
             //appleImage = ImageIO.read(new File("bucket.png"));
             //appleImage = ImageIO.read(new File("chocolate.png"));
-            appleImage = ImageIO.read(new File("flower.png"));
+//            appleImage = ImageIO.read(new File("flower.png"));
 
 
         } catch (Exception e) {
@@ -46,29 +46,12 @@ class MyFrame extends Frame {
                 }
         );
 
-    }
-
-/*        selectFileButton = new Button("Select");
+        selectFileButton = new Button("Select");
         generateButton = new Button("Generate");
         this.add(selectFileButton);
         this.add(generateButton);
 
-        selectFileButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            }
-        });
-
-        generateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            }
-        });
-    }*/
-
-    //private void selectFile() {
-
-    //}
+    }
 
     public void paint(Graphics g) {
         int w = 500;
@@ -88,21 +71,15 @@ class MyFrame extends Frame {
         g.drawString("2.Select a random block from the source image", 100 + w, 40);
         g.drawString("3.Generate a synthesis image by place random blocks", 205 + w * 2, 40);
 
-        //selectFileButton.setBounds(25,270,80,30);
-        //generateButton.setBounds(115,270,80,30);
+        selectFileButton.setBounds(15, 550, 80, 30);
+        generateButton.setBounds(90, 550, 80, 30);
     }
 
     public static void main(String[] args) {
         MyFrame frame = new MyFrame();
         frame.setLayout(null);
         frame.repaint();
-
-
-        App app = new App();
-        app.setVisible(true);
-
-
-
-
+//        App app = new App();
+//        app.setVisible(true);
     }
 }
