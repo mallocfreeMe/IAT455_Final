@@ -91,7 +91,7 @@ public class ImageQuilting {
                         for (int l = 0; l < blockSize; l++) {
                         }
                     }
-                    findMinimumOverlapError(srcImage, null,,width,height);
+                    //findMinimumOverlapError(srcImage, null,width,height);
                 } else if (j == 1) {
                     // the first row
                 } else {

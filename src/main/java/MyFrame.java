@@ -77,11 +77,9 @@ class MyFrame extends Frame {
                         {
                             inputImage = ImageIO.read(new File(imgName));
 
-
                             //System.out.println(blockSize);
                             randomBlock = ImageQuilting.randomBlock(inputImage, blockSize);
                             randomImage = ImageQuilting.randomImage(inputImage, width / 5, height / 5, blockSize);
-
 
                         }
                         catch (Exception g)
@@ -104,6 +102,7 @@ class MyFrame extends Frame {
             try
             {
                 inputImage = ImageIO.read(new File(imgName));
+
 
             }
             catch (Exception e)
