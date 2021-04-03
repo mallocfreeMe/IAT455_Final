@@ -24,8 +24,6 @@ class MyFrame extends Frame {
             //appleImage = ImageIO.read(new File("bucket.png"));
             //appleImage = ImageIO.read(new File("chocolate.png"));
 //            appleImage = ImageIO.read(new File("flower.png"));
-
-
         } catch (Exception e) {
             System.out.println("Cannot load the provided image");
         }
@@ -36,7 +34,7 @@ class MyFrame extends Frame {
         height = appleImage.getHeight() * 4;
 
         randomBlock = ImageQuilting.randomBlock(appleImage, 10);
-        randomImage = ImageQuilting.randomImage(appleImage, width / 5, height / 5, 10);
+        randomImage = ImageQuilting.randomImage(appleImage, width / 10, height / 10, 10);
 
         this.addWindowListener(
                 new WindowAdapter() {
@@ -79,7 +77,7 @@ class MyFrame extends Frame {
         MyFrame frame = new MyFrame();
         frame.setLayout(null);
         frame.repaint();
-        App app = new App();
-        app.setVisible(true);
+//        App app = new App();
+//        app.setVisible(true);
     }
 }
