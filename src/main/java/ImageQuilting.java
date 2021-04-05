@@ -57,7 +57,7 @@ public class ImageQuilting {
             }
         }
 
-        int error = 0;
+        int error;
         int previousError = 0;
         BufferedImage result = new BufferedImage(blockSize, blockSize, leftBlock.getType());
 
@@ -91,13 +91,59 @@ public class ImageQuilting {
         return result;
     }
 
-    public static BufferedImage FindMinimumUpBlock(BufferedImage srcImage, BufferedImage rightBlock) {
+    public static BufferedImage findMinimumBottomBlock(BufferedImage srcImage, BufferedImage topBlock)
+    {
         int width = srcImage.getWidth();
         int height = srcImage.getHeight();
-        int blockSize = rightBlock.getWidth();
+        int blockSize = topBlock.getHeight();
         int overlap = (int) (0.5 * blockSize);
-        BufferedImage result = new BufferedImage(blockSize, blockSize, rightBlock.getType());
 
+        BufferedImage topBlockOverlap = new BufferedImage(overlap, blockSize, topBlock.getType());
+        int topBlockOverlapRGB = 0;
+
+        for (int i = 0; i < topBlockOverlap.getWidth(); i++) {
+            for (int j = blockSize - topBlockOverlap.getHeight(); j < blockSize; j++) {
+                topBlockOverlap.setRGB(i, j - (blockSize - topBlockOverlap.getHeight()), topBlock.getRGB(i, j));
+                topBlockOverlapRGB += topBlock.getRGB(i, j);
+            }
+        }
+
+        int error = 0;
+        int previousError = 0;
+        BufferedImage result = new BufferedImage(blockSize, blockSize, topBlock.getType());
+
+        for (int i = 0; i < width - blockSize; i += blockSize) {
+            for (int j = 0; j < height - blockSize; j += blockSize) {
+
+                BufferedImage bottomBlock = new BufferedImage(blockSize, blockSize, topBlock.getType());
+                BufferedImage bottomBlockOverlap = new BufferedImage(overlap, blockSize, topBlock.getType());
+                int bottomBlockOverlapRGB = 0;
+
+                for (int k = 0; k < blockSize; k++) {
+                    for (int l = 0; l < blockSize; l++) {
+                        bottomBlock.setRGB(i + k, j + l, srcImage.getRGB(k, l));
+                    }
+                }
+
+                for (int k = 0; k < bottomBlockOverlap.getWidth(); k++) {
+                    for (int l = 0; l < bottomBlockOverlap.getHeight(); l++) {
+                        bottomBlockOverlap.setRGB(k, l, bottomBlock.getRGB(k, l));
+                        bottomBlockOverlapRGB += bottomBlock.getRGB(k, l);
+                    }
+                }
+                error = Math.abs(bottomBlockOverlapRGB - topBlockOverlapRGB);
+                if(i == 0 || error < previousError) {
+                    previousError = error;
+                    result = bottomBlock;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public static BufferedImage findMinimumBlock(BufferedImage srcImage, BufferedImage leftBlock, BufferedImage topBlock) {
+        BufferedImage result = new BufferedImage(leftBlock.getWidth(), leftBlock.getWidth(), topBlock.getType());
         return result;
     }
 
@@ -109,16 +155,24 @@ public class ImageQuilting {
             for (int j = 0; j < height - blockSize; j += blockSize) {
                 // the first random block
                 if (i == 0 && j == 0) {
-                    BufferedImage blockImage = randomBlock(srcImage, blockSize);
+                    BufferedImage topLeftBlock = randomBlock(srcImage, blockSize);
                     for (int k = 0; k < blockSize; k++) {
                         for (int l = 0; l < blockSize; l++) {
-                            result.setRGB(i + k, j + l, blockImage.getRGB(k, l));
+                            result.setRGB(i + k, j + l, topLeftBlock.getRGB(k, l));
                         }
                     }
                 } else if (i == 0) {
-                    // the first col
-                } else if (j == 0) {
                     // the first row
+                    BufferedImage leftBlock = new BufferedImage(blockSize, blockSize, srcImage.getType());
+
+                    for (int k = 0; k < blockSize; k++) {
+                        for (int l = 0; l < blockSize; l++) {
+                            result.setRGB(i + k, j + l, leftBlock.getRGB(k, l));
+                        }
+                    }
+
+                } else if (j == 0) {
+                    // the first col
                 } else {
                     // other cases
                 }
