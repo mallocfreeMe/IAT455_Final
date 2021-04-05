@@ -142,8 +142,6 @@ class MyFrame extends Frame {
         g.drawString("Select texture Image:", w/2, 190);
         selectFileButton.setBounds(w/2+300, 170, 120, 30);
 
-
-
         Font f3 = new Font("Verdana", Font.PLAIN, 18);
         g.setFont(f3);
         //===instructions====
@@ -170,7 +168,6 @@ class MyFrame extends Frame {
         //==========Min Cut Method Image===========
         g.drawString("Minimum Error Boundary Cut Method", w/2+400, 550);
         g.drawImage(inputImage, w/2+400, 570, 300, 300, this);
-
     }
 
 

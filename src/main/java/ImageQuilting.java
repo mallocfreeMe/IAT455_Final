@@ -41,31 +41,62 @@ public class ImageQuilting {
         return result;
     }
 
-    // calculate the overlap error
-    public static BufferedImage findMinimumOverlapError(BufferedImage srcImage, BufferedImage topBlock, BufferedImage leftBlock, int width, int height) {
-        int error = 0;
-        int blockSize = 0;
-        int overlap = 0;
-        BufferedImage result = new BufferedImage(width, height, srcImage.getType());
+    public static BufferedImage findMinimumRightBlock(BufferedImage srcImage, BufferedImage leftBlock) {
+        int width = srcImage.getWidth();
+        int height = srcImage.getHeight();
+        int blockSize = leftBlock.getWidth();
+        int overlap = (int) (0.5 * blockSize);
 
-        if (topBlock != null) {
-            blockSize = topBlock.getWidth();
-        } else {
-            blockSize = leftBlock.getWidth();
+        BufferedImage leftBlockOverlap = new BufferedImage(overlap, blockSize, leftBlock.getType());
+        int leftBlockOverlapRGB = 0;
+
+        for (int i = blockSize - leftBlockOverlap.getWidth(); i < blockSize; i++) {
+            for (int j = 0; j < leftBlockOverlap.getHeight(); j++) {
+                leftBlockOverlap.setRGB(i - (blockSize - leftBlockOverlap.getWidth()), j, leftBlock.getRGB(i, j));
+                leftBlockOverlapRGB += leftBlock.getRGB(i, j);
+            }
         }
 
-        overlap = (int) (blockSize * 0.3);
+        int error = 0;
+        int previousError = 0;
+        BufferedImage result = new BufferedImage(blockSize, blockSize, leftBlock.getType());
 
-        for (int i = 0; i < srcImage.getWidth() + blockSize; i++) {
-            for (int j = 0; j < srcImage.getHeight() + blockSize; j++) {
-                int rgbImage = srcImage.getRGB(i, j);
+        for (int i = 0; i < width - blockSize; i += blockSize) {
+            for (int j = 0; j < height - blockSize; j += blockSize) {
+
+                BufferedImage rightBlock = new BufferedImage(blockSize, blockSize, leftBlock.getType());
+                BufferedImage rightBlockOverlap = new BufferedImage(overlap, blockSize, leftBlock.getType());
+                int rightBlockOverlapRGB = 0;
+
                 for (int k = 0; k < blockSize; k++) {
                     for (int l = 0; l < blockSize; l++) {
-                        int rgbBlock = topBlock.getRGB(k,l);
+                        rightBlock.setRGB(i + k, j + l, srcImage.getRGB(k, l));
                     }
+                }
+
+                for (int k = 0; k < rightBlockOverlap.getWidth(); k++) {
+                    for (int l = 0; l < rightBlockOverlap.getHeight(); l++) {
+                        rightBlockOverlap.setRGB(k, l, rightBlock.getRGB(k, l));
+                        rightBlockOverlapRGB += rightBlock.getRGB(k, l);
+                    }
+                }
+                error = Math.abs(rightBlockOverlapRGB - leftBlockOverlapRGB);
+                if(i == 0 || error < previousError) {
+                    previousError = error;
+                    result = rightBlock;
                 }
             }
         }
+
+        return result;
+    }
+
+    public static BufferedImage FindMinimumUpBlock(BufferedImage srcImage, BufferedImage rightBlock) {
+        int width = srcImage.getWidth();
+        int height = srcImage.getHeight();
+        int blockSize = rightBlock.getWidth();
+        int overlap = (int) (0.5 * blockSize);
+        BufferedImage result = new BufferedImage(blockSize, blockSize, rightBlock.getType());
 
         return result;
     }
@@ -84,15 +115,9 @@ public class ImageQuilting {
                             result.setRGB(i + k, j + l, blockImage.getRGB(k, l));
                         }
                     }
-                } else if (i == 1) {
+                } else if (i == 0) {
                     // the first col
-                    BufferedImage leftBlock = new BufferedImage(blockSize, blockSize, srcImage.getType());
-                    for (int k = 0; k < blockSize; k++) {
-                        for (int l = 0; l < blockSize; l++) {
-                        }
-                    }
-                    //findMinimumOverlapError(srcImage, null,width,height);
-                } else if (j == 1) {
+                } else if (j == 0) {
                     // the first row
                 } else {
                     // other cases
