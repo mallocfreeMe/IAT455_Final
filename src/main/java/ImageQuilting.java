@@ -4,24 +4,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 
 public class ImageQuilting {
-    //============================Getting R,G,B vals==========================
-    private static int getRedVal(int rgb) {
-        Color val = new Color(rgb);
-        return val.getRed();
-    }
 
-    private static int getGreenVal(int rgb) {
-        Color val = new Color(rgb);
-        return val.getGreen();
-    }
-
-    private static int getBlueVal(int rgb) {
-        Color val = new Color(rgb);
-        return val.getBlue();
-    }
-
-
-    // random block
+    // the randomBlock method
+    // params: a source image, a user defined block size
+    // post: generate a random block based on the source image
     public static BufferedImage randomBlock(BufferedImage srcImage, int blockSize) {
         int w = srcImage.getWidth();
         int h = srcImage.getHeight();
@@ -40,8 +26,10 @@ public class ImageQuilting {
         return result;
     }
 
-    // random block placement
-    public static BufferedImage randomImage(BufferedImage srcImage, int width, int height, int blockSize) {
+    // the randomPlacementImage method
+    // params: a source image, the synthesis image's width, the synthesis image's height, a user defined block size
+    // post: return a random block placement synthesis image (width * height) based on the source image
+    public static BufferedImage randomPlacementImage(BufferedImage srcImage, int width, int height, int blockSize) {
         BufferedImage result = new BufferedImage(width, height, srcImage.getType());
 
         for (int i = 0; i < width - blockSize; i += blockSize) {
@@ -58,7 +46,9 @@ public class ImageQuilting {
         return result;
     }
 
-
+    // the findMinimumRightBlock method
+    // params: the source image, a left block from the synthesis image
+    // post: return a right block by calculating the minimum rgb difference between each block from the source image and the left block
     public static BufferedImage findMinimumRightBlock(BufferedImage srcImage, BufferedImage leftBlock) {
         int width = srcImage.getWidth();
         int height = srcImage.getHeight();
@@ -113,11 +103,14 @@ public class ImageQuilting {
         return result;
     }
 
+    // the findMinimumBottomBlock method
+    // params: the source image, a top block from the synthesis image
+    // post: return a bottom block by calculating the minimum rgb difference between each block from the source image and the top block
     public static BufferedImage findMinimumBottomBlock(BufferedImage srcImage, BufferedImage topBlock) {
         int width = srcImage.getWidth();
         int height = srcImage.getHeight();
         int blockSize = topBlock.getHeight();
-        int overlap = (int) (0.25 * blockSize);
+        int overlap = (int) (0.3 * blockSize);
 
 
         BufferedImage topBlockOverlap = new BufferedImage(blockSize, overlap, topBlock.getType());
@@ -167,16 +160,18 @@ public class ImageQuilting {
         return result;
     }
 
-
+    // the findMinimumBlock method
+    // params: the source image, a left block from the synthesis image, a top block from the synthesis image
+    // post: return a block by calculating the minimum rgb difference between each block from the source image and the left block
+    // as well as the top block
     public static BufferedImage findMinimumBlock(BufferedImage srcImage, BufferedImage leftBlock, BufferedImage topBlock) {
         int width = srcImage.getWidth();
         int height = srcImage.getHeight();
         int blockSize = topBlock.getHeight();
-        int horizontalOverlap = (int) (0.15 * blockSize);
-        int verticalOverlap = (int) (0.25 * blockSize);
 
-        //apple 0.2 0.3
-        //berry 0.15 0.25
+        //apple 0.2 0.3, berry 0.15 0.25
+        int horizontalOverlap = (int) (0.2 * blockSize);
+        int verticalOverlap = (int) (0.3 * blockSize);
 
         BufferedImage leftBlockOverlap = new BufferedImage(horizontalOverlap, blockSize, leftBlock.getType());
         BufferedImage topBlockOverlap = new BufferedImage(blockSize, verticalOverlap, topBlock.getType());
@@ -240,30 +235,29 @@ public class ImageQuilting {
                 leftError = (Math.abs(blockLeftOverlapRGB - leftBlockRightOverlapRGB));
                 topError = (Math.abs(topBlockBottomOverlapRGB - blockTopOverlapRGB));
 
-
                 finalError = leftError + topError;
-                //System.out.println("T"+topError);
-                //System.out.println("L"+leftError);
-                //System.out.println("F"+finalError);
 
                 if (i == 0 || finalError < previousFinalError) {
                     previousFinalError = finalError;
                     result = block;
                 }
-
             }
         }
 
         return result;
     }
 
-    public static BufferedImage neighboringBlockPlacement(BufferedImage srcImage, int width, int height, int blockSize) {
+    // the neighboringBlockPlacementImage method
+    // params:a source image, user defined width for the synthesis image, user defined height for the synthesis image, and a user defined block size
+    // post: generate a synthesis image using the neighboring block placement method (find the minimum error block)
+    public static BufferedImage neighboringBlockPlacementImage(BufferedImage srcImage, int width, int height, int blockSize) {
         BufferedImage result = new BufferedImage(width, height, srcImage.getType());
 
+        // four cases
         for (int i = 0; i < width - blockSize; i += blockSize) {
             for (int j = 0; j < height - blockSize; j += blockSize) {
-                // the first random block
                 if (i == 0 && j == 0) {
+                    // 1. the first top left case: generate a random block and place it on the correspond position on the synthesis image
                     BufferedImage topLeftBlock = randomBlock(srcImage, blockSize);
                     for (int k = 0; k < blockSize; k++) {
                         for (int l = 0; l < blockSize; l++) {
@@ -271,8 +265,8 @@ public class ImageQuilting {
                         }
                     }
                 } else if (i == 0) {
-                    // the first col case
-                    // find the minimum bottom block
+                    // 2. the first col case: find the minimum bottom block from the source image,
+                    // and place it on the correspond position on the synthesis image
                     BufferedImage topBlock = new BufferedImage(blockSize, blockSize, srcImage.getType());
 
                     for (int k = 0; k < blockSize; k++) {
@@ -288,8 +282,8 @@ public class ImageQuilting {
                         }
                     }
                 } else if (j == 0) {
-                    // the first row case
-                    // find the minimum right block
+                    // 3. the first row case: find the minimum right block from the source image,
+                    // and place it on the correspond position on the synthesis image
                     BufferedImage leftBlock = new BufferedImage(blockSize, blockSize, srcImage.getType());
 
                     for (int k = 0; k < blockSize; k++) {
@@ -305,7 +299,8 @@ public class ImageQuilting {
                         }
                     }
                 } else {
-                    // other cases
+                    // 4. other cases: Compare the left block and the top block at the same time to find the current block,
+                    // and place it on the correspond position on the synthesis image
                     BufferedImage topBlock = new BufferedImage(blockSize, blockSize, srcImage.getType());
 
                     for (int k = 0; k < blockSize; k++) {

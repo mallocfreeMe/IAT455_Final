@@ -22,14 +22,10 @@ class MyFrame extends Frame {
     public String imgName, input;
     public int blockSize = 45;
 
-    //private Button generateButton;
-
     public static void main(String[] args) {
         MyFrame frame = new MyFrame();
         frame.setLayout(null);
         frame.repaint();
-        //System.out.println("pass");
-
     }
 
     public MyFrame() {
@@ -54,8 +50,7 @@ class MyFrame extends Frame {
             }
         });
 
-
-        //=======User select file=========
+        //======= User select file =========
         selectFileButton.addActionListener(new ActionListener() {
             File image;
             int response;
@@ -74,17 +69,14 @@ class MyFrame extends Frame {
                         try {
                             inputImage = ImageIO.read(new File(imgName));
                             randomBlock = ImageQuilting.randomBlock(inputImage, blockSize);
-                            randomImage = ImageQuilting.randomImage(inputImage, width/5, height/5, blockSize);
-                            neighboringBlockImage = ImageQuilting.neighboringBlockPlacement(inputImage,width/5, height/5, blockSize);
+                            randomImage = ImageQuilting.randomPlacementImage(inputImage, width / 5, height / 5, blockSize);
+                            neighboringBlockImage = ImageQuilting.neighboringBlockPlacementImage(inputImage, width / 5, height / 5, blockSize);
                         } catch (Exception error) {
                             System.out.println(error);
                         }
-
                         repaint();
                     }
-
                 }
-
             }
         });
 
@@ -92,8 +84,6 @@ class MyFrame extends Frame {
             imgName = "BlankImage.png";
             try {
                 inputImage = ImageIO.read(new File(imgName));
-
-
             } catch (Exception e) {
                 System.out.println("Cannot load the provided image");
             }
@@ -107,12 +97,10 @@ class MyFrame extends Frame {
         int h = 950;
         this.setSize(w, h);
 
-
         g.setColor(Color.BLACK);
         Font f1 = new Font("Verdana", Font.BOLD, 32);
         g.setFont(f1);
         g.drawString("Texture Synthesis", w / 2 - 200, 60);
-
 
         Font f2 = new Font("Verdana", Font.BOLD, 20);
         g.setFont(f2);
@@ -152,6 +140,4 @@ class MyFrame extends Frame {
         g.drawString("Minimum Error Boundary Cut Method", w / 2 + 400, 550);
         g.drawImage(inputImage, w / 2 + 400, 570, 300, 300, this);
     }
-
-
 }
