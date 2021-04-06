@@ -171,9 +171,12 @@ public class ImageQuilting {
                 topBlockOverlapRGB += topBlock.getRGB(i, j);
             }
         }
+
         //======left overlap border======
-        for (int i = blockSize - leftBlockOverlap.getWidth(); i < blockSize; i++) {
-            for (int j = 0; j < leftBlockOverlap.getHeight(); j++) {
+        for (int i = blockSize - leftBlockOverlap.getWidth(); i < blockSize; i++)
+        {
+            for (int j = 0; j < leftBlockOverlap.getHeight(); j++)
+            {
                 leftBlockOverlap.setRGB(i - (blockSize - leftBlockOverlap.getWidth()), j, leftBlock.getRGB(i, j));
                 leftBlockOverlapRGB += leftBlock.getRGB(i, j);
             }
