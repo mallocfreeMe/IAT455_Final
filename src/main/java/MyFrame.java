@@ -20,7 +20,7 @@ class MyFrame extends Frame {
     public Button selectFileButton;
     public TextField blockSizeSelection;
     public String imgName, input;
-    public int blockSize = 20;
+    public int blockSize = 45;
 
     //private Button generateButton;
 
@@ -44,7 +44,7 @@ class MyFrame extends Frame {
         selectFileButton = new Button("Select");
         this.add(selectFileButton);
 
-        blockSizeSelection = new TextField("20");
+        blockSizeSelection = new TextField("45");
         this.add(blockSizeSelection);
         blockSizeSelection.addActionListener(new ActionListener() {
             @Override
@@ -74,8 +74,8 @@ class MyFrame extends Frame {
                         try {
                             inputImage = ImageIO.read(new File(imgName));
                             randomBlock = ImageQuilting.randomBlock(inputImage, blockSize);
-                            randomImage = ImageQuilting.randomImage(inputImage, width / 5, height / 5, blockSize);
-                            neighboringBlockImage = ImageQuilting.neighboringBlockPlacement(inputImage,width / 5, height / 5, blockSize);
+                            randomImage = ImageQuilting.randomImage(inputImage, width/5, height/5, blockSize);
+                            neighboringBlockImage = ImageQuilting.neighboringBlockPlacement(inputImage,width/5, height/5, blockSize);
                         } catch (Exception error) {
                             System.out.println(error);
                         }
