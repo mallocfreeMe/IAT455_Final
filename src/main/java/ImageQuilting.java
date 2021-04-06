@@ -154,11 +154,8 @@ public class ImageQuilting {
 
         int topBlockOverlapRGB = 0;
         int leftBlockOverlapRGB = 0;
-
-        int topError = 0;
-        int topPreviousError = 0;
-        int leftError;
-        int leftPreviousError = 0;
+        int blockTopOverlapRGB = 0;
+        int blockLeftOverlapRGB = 0;
 
         BufferedImage topBlockOverlap = new BufferedImage(overlap, blockSize, topBlock.getType());
         BufferedImage leftBlockOverlap = new BufferedImage(overlap, blockSize, leftBlock.getType());
@@ -182,72 +179,51 @@ public class ImageQuilting {
             }
         }
 
+        int finalError = 0;
+        int previousFinalError = 0;
+        int leftError = 0;
+        int topError = 0;
 
         //===================================================
         for (int i = 0; i < width - blockSize; i += blockSize)
         {
             for (int j = 0; j < height - blockSize; j += blockSize)
             {
+                BufferedImage block = new BufferedImage(blockSize, blockSize, topBlock.getType());
+                BufferedImage blockTopOverlap = new BufferedImage(overlap, blockSize, topBlock.getType());
+                BufferedImage blockLeftOverlap = new BufferedImage(overlap, blockSize, leftBlock.getType());
 
-                BufferedImage bottomBlock = new BufferedImage(blockSize, blockSize, topBlock.getType());
-                BufferedImage bottomBlockOverlap = new BufferedImage(overlap, blockSize, topBlock.getType());
-                BufferedImage rightBlock = new BufferedImage(blockSize, blockSize, leftBlock.getType());
-                BufferedImage rightBlockOverlap = new BufferedImage(overlap, blockSize, leftBlock.getType());
-
-                int bottomBlockOverlapRGB = 0;
-                int rightBlockOverlapRGB = 0;
-
-                //=====================
                 for (int k = 0; k < blockSize; k++)
                 {
                     for (int l = 0; l < blockSize; l++)
                     {
-                        bottomBlock.setRGB(i + k, j + l, srcImage.getRGB(k, l));
+                        block.setRGB(i + k, j + l, srcImage.getRGB(k, l));
                     }
                 }
 
-                for (int k = 0; k < bottomBlockOverlap.getWidth(); k++)
+                for (int k = 0; k < blockTopOverlap.getWidth(); k++)
                 {
-                    for (int l = 0; l < bottomBlockOverlap.getHeight(); l++)
+                    for (int l = 0; l < blockTopOverlap.getHeight(); l++)
                     {
-                        bottomBlockOverlap.setRGB(k, l, bottomBlock.getRGB(k, l));
-                        bottomBlockOverlapRGB += bottomBlock.getRGB(k, l);
+                        blockTopOverlap.setRGB(k, l, block.getRGB(k, l));
+                        blockTopOverlapRGB += block.getRGB(k, l);
                     }
                 }
-
-                //======================
-                for (int k = 0; k < blockSize; k++)
+                for (int k = 0; k < blockLeftOverlap.getWidth(); k++)
                 {
-                    for (int l = 0; l < blockSize; l++)
+                    for (int l = 0; l < blockLeftOverlap.getHeight(); l++)
                     {
-                        rightBlock.setRGB(i + k, j + l, srcImage.getRGB(k, l));
+                        blockLeftOverlap.setRGB(k, l, block.getRGB(k, l));
+                        blockLeftOverlapRGB += block.getRGB(k, l);
                     }
                 }
 
-                for (int k = 0; k < rightBlockOverlap.getWidth(); k++)
+                finalError = Math.abs(leftError + topError);
+                if(i == 0 || finalError < previousFinalError)
                 {
-                    for (int l = 0; l < rightBlockOverlap.getHeight(); l++) {
-
-                        rightBlockOverlap.setRGB(k, l, rightBlock.getRGB(k, l));
-                        rightBlockOverlapRGB += rightBlock.getRGB(k, l);
-                    }
+                    previousFinalError = finalError;
+                    result = block;
                 }
-
-                //===================================================
-                leftError = Math.abs(rightBlockOverlapRGB - leftBlockOverlapRGB);
-                if(i == 0 || leftError < leftPreviousError)
-                {
-                    leftPreviousError = leftError;
-                    result = rightBlock;
-                }
-
-                topError = Math.abs(bottomBlockOverlapRGB - topBlockOverlapRGB);
-                if(i == 0 || topError < topPreviousError)
-                {
-                    topPreviousError = topError;
-                    result = bottomBlock;
-                }
-
 
             }
         }
