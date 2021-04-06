@@ -4,6 +4,24 @@ import java.util.concurrent.ThreadLocalRandom;
 
 
 public class ImageQuilting {
+    //============================Getting R,G,B vals==========================
+    private static int getRedVal(int rgb)
+    {
+        Color val = new Color(rgb);
+        return val.getRed();
+    }
+    private static int getGreenVal(int rgb)
+    {
+        Color val = new Color(rgb);
+        return val.getGreen();
+    }
+    private static int getBlueVal(int rgb)
+    {
+        Color val = new Color(rgb);
+        return val.getBlue();
+    }
+
+
     // random block
     public static BufferedImage randomBlock(BufferedImage srcImage, int blockSize) {
         int w = srcImage.getWidth();
@@ -41,14 +59,17 @@ public class ImageQuilting {
         return result;
     }
 
+
+
     public static BufferedImage findMinimumRightBlock(BufferedImage srcImage, BufferedImage leftBlock) {
         int width = srcImage.getWidth();
         int height = srcImage.getHeight();
         int blockSize = leftBlock.getWidth();
-        int overlap = (int) (0.5 * blockSize);
+        int overlap = (int) (0.05 * blockSize);
+        int totalPixelCount = 0;
 
         BufferedImage leftBlockOverlap = new BufferedImage(overlap, blockSize, leftBlock.getType());
-        int leftBlockOverlapRGB = 0;
+        int leftBlockOverlapRGB = 0, leftBlockOverlapR, leftBlockOverlapG, leftBlockOverlapB;
 
         for (int i = blockSize - overlap; i < blockSize; i++) {
             for (int j = 0; j < leftBlockOverlap.getHeight(); j++) {
@@ -66,7 +87,7 @@ public class ImageQuilting {
 
                 BufferedImage rightBlock = new BufferedImage(blockSize, blockSize, leftBlock.getType());
                 BufferedImage rightBlockOverlap = new BufferedImage(overlap, blockSize, leftBlock.getType());
-                int rightBlockOverlapRGB = 0;
+                int rightBlockOverlapRGB = 0, rightBlockOverlapR, rightBlockOverlapG, rightBlockOverlapB;
 
                 for (int k = 0; k < blockSize; k++) {
                     for (int l = 0; l < blockSize; l++) {
@@ -78,9 +99,26 @@ public class ImageQuilting {
                     for (int l = 0; l < rightBlockOverlap.getHeight(); l++) {
                         rightBlockOverlap.setRGB(k, l, rightBlock.getRGB(k, l));
                         rightBlockOverlapRGB += rightBlock.getRGB(k, l);
+                        totalPixelCount +=1;
                     }
                 }
-                error = Math.abs(rightBlockOverlapRGB - leftBlockOverlapRGB);
+                leftBlockOverlapR = getRedVal(leftBlockOverlapRGB);
+                leftBlockOverlapG = getGreenVal(leftBlockOverlapRGB);
+                leftBlockOverlapB = getBlueVal(leftBlockOverlapRGB);
+
+                rightBlockOverlapR = getRedVal(rightBlockOverlapRGB);
+                rightBlockOverlapG = getGreenVal(rightBlockOverlapRGB);
+                rightBlockOverlapB = getBlueVal(rightBlockOverlapRGB);
+
+                //error = Math.abs(rightBlockOverlapRGB - leftBlockOverlapRGB);
+
+
+                error = ((1/totalPixelCount)*(Math.abs(rightBlockOverlapR-leftBlockOverlapR))^2 +
+                        (1/totalPixelCount)*(Math.abs(rightBlockOverlapG-leftBlockOverlapG))^2 +
+                        (1/totalPixelCount)*(Math.abs(rightBlockOverlapB-leftBlockOverlapB))^2);
+
+
+
                 if (i == 0 || error < previousError) {
                     previousError = error;
                     result = rightBlock;
@@ -95,10 +133,11 @@ public class ImageQuilting {
         int width = srcImage.getWidth();
         int height = srcImage.getHeight();
         int blockSize = topBlock.getHeight();
-        int overlap = (int) (0.5 * blockSize);
+        int overlap = (int) (0.05 * blockSize);
+        int totalPixelCount =0;
 
         BufferedImage topBlockOverlap = new BufferedImage(blockSize, overlap, topBlock.getType());
-        int topBlockOverlapRGB = 0;
+        int topBlockOverlapRGB = 0,topBlockOverlapR,topBlockOverlapG,topBlockOverlapB;
 
         for (int i = 0; i < topBlockOverlap.getWidth(); i++) {
             for (int j = blockSize - overlap; j < blockSize; j++) {
@@ -116,7 +155,7 @@ public class ImageQuilting {
 
                 BufferedImage bottomBlock = new BufferedImage(blockSize, blockSize, topBlock.getType());
                 BufferedImage bottomBlockOverlap = new BufferedImage(overlap, blockSize, topBlock.getType());
-                int bottomBlockOverlapRGB = 0;
+                int bottomBlockOverlapRGB = 0, bottomBlockOverlapR, bottomBlockOverlapG, bottomBlockOverlapB;
 
                 for (int k = 0; k < blockSize; k++) {
                     for (int l = 0; l < blockSize; l++) {
@@ -128,9 +167,26 @@ public class ImageQuilting {
                     for (int l = 0; l < bottomBlockOverlap.getHeight(); l++) {
                         bottomBlockOverlap.setRGB(k, l, bottomBlock.getRGB(k, l));
                         bottomBlockOverlapRGB += bottomBlock.getRGB(k, l);
+                        totalPixelCount +=1;
                     }
                 }
-                error = Math.abs(bottomBlockOverlapRGB - topBlockOverlapRGB);
+
+                topBlockOverlapR = getRedVal(topBlockOverlapRGB);
+                topBlockOverlapG = getGreenVal(topBlockOverlapRGB);
+                topBlockOverlapB = getBlueVal(topBlockOverlapRGB);
+
+                bottomBlockOverlapR = getRedVal(bottomBlockOverlapRGB);
+                bottomBlockOverlapG = getGreenVal(bottomBlockOverlapRGB);
+                bottomBlockOverlapB = getBlueVal(bottomBlockOverlapRGB);
+
+                //error = Math.abs(rightBlockOverlapRGB - leftBlockOverlapRGB);
+                error = ((1/totalPixelCount)*(Math.abs(topBlockOverlapR-bottomBlockOverlapR))^2 +
+                        (1/totalPixelCount)*(Math.abs(topBlockOverlapG-bottomBlockOverlapG))^2 +
+                        (1/totalPixelCount)*(Math.abs(topBlockOverlapB-bottomBlockOverlapB))^2);
+
+                System.out.println(error);
+
+                //error = Math.abs(bottomBlockOverlapRGB - topBlockOverlapRGB);
                 if (i == 0 || error < previousError) {
                     previousError = error;
                     result = bottomBlock;
@@ -146,12 +202,13 @@ public class ImageQuilting {
         int width = srcImage.getWidth();
         int height = srcImage.getHeight();
         int blockSize = topBlock.getHeight();
-        int overlap = (int) (0.5 * blockSize);
+        int overlap = (int) (0.05 * blockSize);
+        int totalPixelCount =0;
 
         BufferedImage leftBlockOverlap = new BufferedImage(overlap, blockSize, leftBlock.getType());
         BufferedImage topBlockOverlap = new BufferedImage(blockSize, overlap, topBlock.getType());
-        int topBlockBottomOverlapRGB = 0;
-        int leftBlockRightOverlapRGB = 0;
+        int topBlockBottomOverlapRGB = 0,topBlockBottomOverlapR,topBlockBottomOverlapG,topBlockBottomOverlapB;
+        int leftBlockRightOverlapRGB = 0,leftBlockRightOverlapR,leftBlockRightOverlapG,leftBlockRightOverlapB;
 
         for (int i = blockSize - overlap; i < blockSize; i++) {
             for (int j = 0; j < leftBlockOverlap.getHeight(); j++) {
@@ -170,8 +227,9 @@ public class ImageQuilting {
         int leftError;
         int topError;
         int finalError;
-        int blockLeftOverlapRGB = 0;
-        int blockTopOverlapRGB = 0;
+
+        int blockLeftOverlapRGB = 0,blockLeftOverlapR,blockLeftOverlapG,blockLeftOverlapB;
+        int blockTopOverlapRGB = 0,blockTopOverlapR,blockTopOverlapG,blockTopOverlapB;
         int previousFinalError = 0;
         BufferedImage result = new BufferedImage(blockSize, blockSize, topBlock.getType());
 
@@ -192,6 +250,7 @@ public class ImageQuilting {
                     for (int l = 0; l < blockLeftOverlap.getHeight(); l++) {
                         blockLeftOverlap.setRGB(k, l, block.getRGB(k, l));
                         blockLeftOverlapRGB += block.getRGB(k, l);
+                        totalPixelCount +=1;
                     }
                 }
 
@@ -204,8 +263,32 @@ public class ImageQuilting {
                     }
                 }
 
-                leftError = Math.abs(leftBlockRightOverlapRGB - blockLeftOverlapRGB);
-                topError = Math.abs(topBlockBottomOverlapRGB - blockTopOverlapRGB);
+                //leftError = Math.abs(leftBlockRightOverlapRGB - blockLeftOverlapRGB);
+                //topError = Math.abs(topBlockBottomOverlapRGB - blockTopOverlapRGB);
+                leftBlockRightOverlapR = getRedVal(leftBlockRightOverlapRGB);
+                leftBlockRightOverlapG = getGreenVal(leftBlockRightOverlapRGB);
+                leftBlockRightOverlapB = getBlueVal(leftBlockRightOverlapRGB);
+                blockLeftOverlapR = getRedVal(blockLeftOverlapRGB);
+                blockLeftOverlapG = getGreenVal(blockLeftOverlapRGB);
+                blockLeftOverlapB = getBlueVal(blockLeftOverlapRGB);
+
+                topBlockBottomOverlapR = getRedVal(topBlockBottomOverlapRGB);
+                topBlockBottomOverlapG = getGreenVal(topBlockBottomOverlapRGB);
+                topBlockBottomOverlapB = getBlueVal(topBlockBottomOverlapRGB);
+                blockTopOverlapR = getRedVal(blockTopOverlapRGB);
+                blockTopOverlapG = getGreenVal(blockTopOverlapRGB);
+                blockTopOverlapB = getBlueVal(blockTopOverlapRGB);
+
+
+                //error = Math.abs(rightBlockOverlapRGB - leftBlockOverlapRGB);
+                leftError = ((1/totalPixelCount)*(Math.abs(blockLeftOverlapR-leftBlockRightOverlapR))^2 +
+                        (1/totalPixelCount)*(Math.abs(blockLeftOverlapG-leftBlockRightOverlapG))^2 +
+                        (1/totalPixelCount)*(Math.abs(blockLeftOverlapB-leftBlockRightOverlapB))^2);
+
+                topError = ((1/totalPixelCount)*(Math.abs(topBlockBottomOverlapR-blockTopOverlapR))^2 +
+                        (1/totalPixelCount)*(Math.abs(topBlockBottomOverlapG-blockTopOverlapG))^2 +
+                        (1/totalPixelCount)*(Math.abs(topBlockBottomOverlapB-blockTopOverlapB))^2);
+
                 finalError = leftError + topError;
 
                 if (i == 0 || finalError < previousFinalError) {
@@ -268,13 +351,13 @@ public class ImageQuilting {
                     }
                 } else {
                     // other cases
-//                    BufferedImage topBlock = new BufferedImage(blockSize, blockSize, srcImage.getType());
-//
-//                    for (int k = 0; k < blockSize; k++) {
-//                        for (int l = 0; l < blockSize; l++) {
-//                            topBlock.setRGB(k, l, result.getRGB(i + k, j + l - blockSize));
-//                        }
-//                    }
+                    BufferedImage topBlock = new BufferedImage(blockSize, blockSize, srcImage.getType());
+
+                    for (int k = 0; k < blockSize; k++) {
+                        for (int l = 0; l < blockSize; l++) {
+                            topBlock.setRGB(k, l, result.getRGB(i + k, j + l - blockSize));
+                        }
+                    }
 
                     BufferedImage leftBlock = new BufferedImage(blockSize, blockSize, srcImage.getType());
 
@@ -290,7 +373,7 @@ public class ImageQuilting {
 //                            result.setRGB(i + k, j + l, block.getRGB(k, l));
 //                        }
 //                    }
-                    BufferedImage rightBlock = findMinimumRightBlock(srcImage, leftBlock);
+                    BufferedImage rightBlock = findMinimumBlock(srcImage, leftBlock, topBlock);
                     for (int k = 0; k < blockSize; k++) {
                         for (int l = 0; l < blockSize; l++) {
                             result.setRGB(i + k, j + l, rightBlock.getRGB(k, l));
