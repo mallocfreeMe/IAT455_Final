@@ -50,9 +50,9 @@ public class ImageQuilting {
         BufferedImage leftBlockOverlap = new BufferedImage(overlap, blockSize, leftBlock.getType());
         int leftBlockOverlapRGB = 0;
 
-        for (int i = blockSize - leftBlockOverlap.getWidth(); i < blockSize; i++) {
+        for (int i = blockSize - overlap; i < blockSize; i++) {
             for (int j = 0; j < leftBlockOverlap.getHeight(); j++) {
-                leftBlockOverlap.setRGB(i - (blockSize - leftBlockOverlap.getWidth()), j, leftBlock.getRGB(i, j));
+                leftBlockOverlap.setRGB(i - (blockSize - overlap), j, leftBlock.getRGB(i, j));
                 leftBlockOverlapRGB += leftBlock.getRGB(i, j);
             }
         }
@@ -70,7 +70,7 @@ public class ImageQuilting {
 
                 for (int k = 0; k < blockSize; k++) {
                     for (int l = 0; l < blockSize; l++) {
-                        rightBlock.setRGB(i + k, j + l, srcImage.getRGB(k, l));
+                        rightBlock.setRGB(k, l, srcImage.getRGB(i + k, j + l));
                     }
                 }
 
@@ -81,7 +81,7 @@ public class ImageQuilting {
                     }
                 }
                 error = Math.abs(rightBlockOverlapRGB - leftBlockOverlapRGB);
-                if(i == 0 || error < previousError) {
+                if (i == 0 || error < previousError) {
                     previousError = error;
                     result = rightBlock;
                 }
@@ -91,19 +91,18 @@ public class ImageQuilting {
         return result;
     }
 
-    public static BufferedImage findMinimumBottomBlock(BufferedImage srcImage, BufferedImage topBlock)
-    {
+    public static BufferedImage findMinimumBottomBlock(BufferedImage srcImage, BufferedImage topBlock) {
         int width = srcImage.getWidth();
         int height = srcImage.getHeight();
         int blockSize = topBlock.getHeight();
         int overlap = (int) (0.5 * blockSize);
 
-        BufferedImage topBlockOverlap = new BufferedImage(overlap, blockSize, topBlock.getType());
+        BufferedImage topBlockOverlap = new BufferedImage(blockSize, overlap, topBlock.getType());
         int topBlockOverlapRGB = 0;
 
         for (int i = 0; i < topBlockOverlap.getWidth(); i++) {
-            for (int j = blockSize - topBlockOverlap.getHeight(); j < blockSize; j++) {
-                topBlockOverlap.setRGB(i, j - (blockSize - topBlockOverlap.getHeight()), topBlock.getRGB(i, j));
+            for (int j = blockSize - overlap; j < blockSize; j++) {
+                topBlockOverlap.setRGB(i, j - (blockSize - overlap), topBlock.getRGB(i, j));
                 topBlockOverlapRGB += topBlock.getRGB(i, j);
             }
         }
@@ -121,7 +120,7 @@ public class ImageQuilting {
 
                 for (int k = 0; k < blockSize; k++) {
                     for (int l = 0; l < blockSize; l++) {
-                        bottomBlock.setRGB(i + k, j + l, srcImage.getRGB(k, l));
+                        bottomBlock.setRGB(k, l, srcImage.getRGB(i + k, j + l));
                     }
                 }
 
@@ -132,7 +131,7 @@ public class ImageQuilting {
                     }
                 }
                 error = Math.abs(bottomBlockOverlapRGB - topBlockOverlapRGB);
-                if(i == 0 || error < previousError) {
+                if (i == 0 || error < previousError) {
                     previousError = error;
                     result = bottomBlock;
                 }
@@ -143,87 +142,73 @@ public class ImageQuilting {
     }
 
 
-
-
-    public static BufferedImage findMinimumBlock(BufferedImage srcImage, BufferedImage leftBlock, BufferedImage topBlock)
-    {
+    public static BufferedImage findMinimumBlock(BufferedImage srcImage, BufferedImage leftBlock, BufferedImage topBlock) {
         int width = srcImage.getWidth();
         int height = srcImage.getHeight();
         int blockSize = topBlock.getHeight();
         int overlap = (int) (0.5 * blockSize);
 
-        int topBlockOverlapRGB = 0;
-        int leftBlockOverlapRGB = 0;
-        int blockTopOverlapRGB = 0;
-        int blockLeftOverlapRGB = 0;
-
-        BufferedImage topBlockOverlap = new BufferedImage(overlap, blockSize, topBlock.getType());
         BufferedImage leftBlockOverlap = new BufferedImage(overlap, blockSize, leftBlock.getType());
+        BufferedImage topBlockOverlap = new BufferedImage(blockSize, overlap, topBlock.getType());
+        int topBlockBottomOverlapRGB = 0;
+        int leftBlockRightOverlapRGB = 0;
+
+        for (int i = blockSize - overlap; i < blockSize; i++) {
+            for (int j = 0; j < leftBlockOverlap.getHeight(); j++) {
+                leftBlockOverlap.setRGB(i - (blockSize - overlap), j, leftBlock.getRGB(i, j));
+                leftBlockRightOverlapRGB += leftBlock.getRGB(i, j);
+            }
+        }
+
+        for (int i = 0; i < topBlockOverlap.getWidth(); i++) {
+            for (int j = blockSize - overlap; j < blockSize; j++) {
+                topBlockOverlap.setRGB(i, j - (blockSize - overlap), topBlock.getRGB(i, j));
+                topBlockBottomOverlapRGB += topBlock.getRGB(i, j);
+            }
+        }
+
+        int leftError;
+        int topError;
+        int finalError;
+        int blockLeftOverlapRGB = 0;
+        int blockTopOverlapRGB = 0;
+        int previousFinalError = 0;
         BufferedImage result = new BufferedImage(blockSize, blockSize, topBlock.getType());
 
-        //================Border Value Computation======================
-        //======top overlap border======
-        for (int i = 0; i < topBlockOverlap.getWidth(); i++)
-        {
-            for (int j = blockSize - topBlockOverlap.getHeight(); j < blockSize; j++)
-            {
-                topBlockOverlap.setRGB(i, j - (blockSize - topBlockOverlap.getHeight()), topBlock.getRGB(i, j));
-                topBlockOverlapRGB += topBlock.getRGB(i, j);
-            }
-        }
+        for (int i = 0; i < width - blockSize; i += blockSize) {
+            for (int j = 0; j < height - blockSize; j += blockSize) {
 
-        //======left overlap border======
-        for (int i = blockSize - leftBlockOverlap.getWidth(); i < blockSize; i++)
-        {
-            for (int j = 0; j < leftBlockOverlap.getHeight(); j++)
-            {
-                leftBlockOverlap.setRGB(i - (blockSize - leftBlockOverlap.getWidth()), j, leftBlock.getRGB(i, j));
-                leftBlockOverlapRGB += leftBlock.getRGB(i, j);
-            }
-        }
-
-        int finalError = 0;
-        int previousFinalError = 0;
-        int leftError = 0;
-        int topError = 0;
-
-        //===================================================
-        for (int i = 0; i < width - blockSize; i += blockSize)
-        {
-            for (int j = 0; j < height - blockSize; j += blockSize)
-            {
                 BufferedImage block = new BufferedImage(blockSize, blockSize, topBlock.getType());
-                BufferedImage blockTopOverlap = new BufferedImage(overlap, blockSize, topBlock.getType());
+
+                for (int k = 0; k < blockSize; k++) {
+                    for (int l = 0; l < blockSize; l++) {
+                        block.setRGB(k, l, srcImage.getRGB(i + k, j + l));
+                    }
+                }
+
                 BufferedImage blockLeftOverlap = new BufferedImage(overlap, blockSize, leftBlock.getType());
 
-                for (int k = 0; k < blockSize; k++)
-                {
-                    for (int l = 0; l < blockSize; l++)
-                    {
-                        block.setRGB(i + k, j + l, srcImage.getRGB(k, l));
-                    }
-                }
-
-                for (int k = 0; k < blockTopOverlap.getWidth(); k++)
-                {
-                    for (int l = 0; l < blockTopOverlap.getHeight(); l++)
-                    {
-                        blockTopOverlap.setRGB(k, l, block.getRGB(k, l));
-                        blockTopOverlapRGB += block.getRGB(k, l);
-                    }
-                }
-                for (int k = 0; k < blockLeftOverlap.getWidth(); k++)
-                {
-                    for (int l = 0; l < blockLeftOverlap.getHeight(); l++)
-                    {
+                for (int k = 0; k < blockLeftOverlap.getWidth(); k++) {
+                    for (int l = 0; l < blockLeftOverlap.getHeight(); l++) {
                         blockLeftOverlap.setRGB(k, l, block.getRGB(k, l));
                         blockLeftOverlapRGB += block.getRGB(k, l);
                     }
                 }
 
-                finalError = Math.abs(leftError + topError);
-                if(i == 0 || finalError < previousFinalError)
-                {
+                BufferedImage blockTopOverlap = new BufferedImage(overlap, blockSize, topBlock.getType());
+
+                for (int k = 0; k < blockTopOverlap.getWidth(); k++) {
+                    for (int l = 0; l < blockTopOverlap.getHeight(); l++) {
+                        blockTopOverlap.setRGB(k, l, block.getRGB(k, l));
+                        blockTopOverlapRGB += block.getRGB(k, l);
+                    }
+                }
+
+                leftError = Math.abs(leftBlockRightOverlapRGB - blockLeftOverlapRGB);
+                topError = Math.abs(topBlockBottomOverlapRGB - blockTopOverlapRGB);
+                finalError = leftError + topError;
+
+                if (i == 0 || finalError < previousFinalError) {
                     previousFinalError = finalError;
                     result = block;
                 }
@@ -233,10 +218,6 @@ public class ImageQuilting {
 
         return result;
     }
-
-
-
-
 
     public static BufferedImage neighboringBlockPlacement(BufferedImage srcImage, int width, int height, int blockSize) {
         BufferedImage result = new BufferedImage(width, height, srcImage.getType());
@@ -282,18 +263,18 @@ public class ImageQuilting {
                     BufferedImage rightBlock = findMinimumRightBlock(srcImage, leftBlock);
                     for (int k = 0; k < blockSize; k++) {
                         for (int l = 0; l < blockSize; l++) {
-                            result.setRGB(i + k, j + l,  rightBlock.getRGB(k, l));
+                            result.setRGB(i + k, j + l, rightBlock.getRGB(k, l));
                         }
                     }
                 } else {
                     // other cases
-                    BufferedImage topBlock = new BufferedImage(blockSize, blockSize, srcImage.getType());
-
-                    for (int k = 0; k < blockSize; k++) {
-                        for (int l = 0; l < blockSize; l++) {
-                            topBlock.setRGB(k, l, result.getRGB(i + k, j + l - blockSize));
-                        }
-                    }
+//                    BufferedImage topBlock = new BufferedImage(blockSize, blockSize, srcImage.getType());
+//
+//                    for (int k = 0; k < blockSize; k++) {
+//                        for (int l = 0; l < blockSize; l++) {
+//                            topBlock.setRGB(k, l, result.getRGB(i + k, j + l - blockSize));
+//                        }
+//                    }
 
                     BufferedImage leftBlock = new BufferedImage(blockSize, blockSize, srcImage.getType());
 
@@ -303,16 +284,21 @@ public class ImageQuilting {
                         }
                     }
 
-                    BufferedImage block = findMinimumBlock(srcImage, leftBlock, topBlock);
+//                    BufferedImage block = findMinimumBlock(srcImage, leftBlock, topBlock);
+//                    for (int k = 0; k < blockSize; k++) {
+//                        for (int l = 0; l < blockSize; l++) {
+//                            result.setRGB(i + k, j + l, block.getRGB(k, l));
+//                        }
+//                    }
+                    BufferedImage rightBlock = findMinimumRightBlock(srcImage, leftBlock);
                     for (int k = 0; k < blockSize; k++) {
                         for (int l = 0; l < blockSize; l++) {
-                            result.setRGB(i + k, j + l,  block.getRGB(k, l));
+                            result.setRGB(i + k, j + l, rightBlock.getRGB(k, l));
                         }
                     }
                 }
             }
         }
-
         return result;
     }
 }
