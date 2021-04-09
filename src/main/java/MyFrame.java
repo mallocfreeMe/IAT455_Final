@@ -7,20 +7,23 @@ import javax.swing.*;
 
 
 import javax.imageio.ImageIO;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 class MyFrame extends Frame {
-    public BufferedImage inputImage;
+    private BufferedImage inputImage;
+    private BufferedImage randomBlock;
+    private BufferedImage randomImage;
+    private BufferedImage neighboringBlockImage;
+    private Button selectFileButton;
+    private Button enterButton;
+    private TextField blockSizeSelection;
 
-    public BufferedImage randomBlock;
-    public BufferedImage randomImage;
-    public BufferedImage neighboringBlockImage;
-
+    private String imgName, input;
+    private int blockSize = 45;
     private int width;
     private int height;
-    public Button selectFileButton;
-    public TextField blockSizeSelection;
-    public String imgName, input;
-    public int blockSize = 45;
+    private int newWidth;
+    private int newHeight;
 
     public static void main(String[] args) {
         MyFrame frame = new MyFrame();
@@ -37,24 +40,36 @@ class MyFrame extends Frame {
                 System.exit(0);
             }
         });
-        selectFileButton = new Button("Select");
-        this.add(selectFileButton);
 
+        //======= User enters different block sizes =========
         blockSizeSelection = new TextField("45");
         this.add(blockSizeSelection);
-        blockSizeSelection.addActionListener(new ActionListener() {
+
+        enterButton = new Button("Enter");
+        this.add(enterButton);
+        enterButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                input = blockSizeSelection.getText();
-                blockSize = Integer.parseInt(input);
+                if (e.getSource() == enterButton) {
+                    input = blockSizeSelection.getText();
+                    blockSize = Integer.parseInt(input);
+                    if (imgName != "BlankImage.png") {
+                        randomBlock = ImageQuilting.randomBlock(inputImage, blockSize);
+                        randomImage = ImageQuilting.randomPlacementImage(inputImage, newWidth, newHeight, blockSize);
+                        neighboringBlockImage = ImageQuilting.neighboringBlockPlacementImage(inputImage, newWidth, newHeight, blockSize);
+                        repaint();
+                    }
+                }
             }
         });
 
-        //======= User select file =========
+        //======= User selects different images =========
+        selectFileButton = new Button("Select");
+        this.add(selectFileButton);
         selectFileButton.addActionListener(new ActionListener() {
             File image;
             int response;
-            JFileChooser chooser = new JFileChooser(".");
+            JFileChooser chooser = new JFileChooser("./img");
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -67,10 +82,12 @@ class MyFrame extends Frame {
                         imgName = image.getName();
 
                         try {
-                            inputImage = ImageIO.read(new File(imgName));
+                            inputImage = ImageIO.read(image);
                             randomBlock = ImageQuilting.randomBlock(inputImage, blockSize);
-                            randomImage = ImageQuilting.randomPlacementImage(inputImage, width / 5, height / 5, blockSize);
-                            neighboringBlockImage = ImageQuilting.neighboringBlockPlacementImage(inputImage, width / 5, height / 5, blockSize);
+                            newWidth = width * 2;
+                            newHeight = height;
+                            randomImage = ImageQuilting.randomPlacementImage(inputImage, newWidth, newHeight, blockSize);
+                            neighboringBlockImage = ImageQuilting.neighboringBlockPlacementImage(inputImage, newWidth, newHeight, blockSize);
                         } catch (Exception error) {
                             System.out.println(error);
                         }
@@ -88,8 +105,14 @@ class MyFrame extends Frame {
                 System.out.println("Cannot load the provided image");
             }
         }
-        width = inputImage.getWidth() * 4;
-        height = inputImage.getHeight() * 4;
+
+        if (imgName == "BlankImage.png") {
+            width = 200;
+            height = 200;
+        } else {
+            width = inputImage.getWidth();
+            height = inputImage.getHeight();
+        }
     }
 
     public void paint(Graphics g) {
@@ -108,21 +131,31 @@ class MyFrame extends Frame {
 
         //=====TextField=====
         g.drawString("BlockSize:", w / 2, 140);
-        blockSizeSelection.setBounds(w / 2 + 285, 120, 150, 30);
-        //=====Button======
+        if (blockSizeSelection != null) {
+            blockSizeSelection.setBounds(w / 2 + 285, 120, 50, 30);
+        }
+
+        //===== Enter Button =====
+        if (enterButton != null) {
+            enterButton.setBounds(w / 2 + 350, 120, 150, 30);
+        }
+
+        //===== Select Images Button======
         g.drawString("Select texture Image:", w / 2, 190);
-        selectFileButton.setBounds(w / 2 + 300, 170, 120, 30);
+        if (selectFileButton != null) {
+            selectFileButton.setBounds(w / 2 + 280, 170, 120, 30);
+        }
 
         Font f3 = new Font("Verdana", Font.PLAIN, 18);
         g.setFont(f3);
+
         //===instructions====
         g.drawString("1. Enter the desired block size (a value) and press enter to confirm", w / 2 - 750, 140);
         g.drawString("2. Select the desired image", w / 2 - 750, 170);
 
-        //System.out.println(inputted);
         //==========Original Image===========
-        g.drawString("Original Texture image", w / 2 + 5, 240);
-        g.drawImage(inputImage, w / 2, 260, 200, 200, this);
+        g.drawString("Original Texture image", w / 2, 240);
+        g.drawImage(inputImage, w / 2, 260, width, height, this);
 
         //==========Block Size Display===========
         g.drawString("Block Size", w / 2 + 250, 360);
@@ -130,14 +163,14 @@ class MyFrame extends Frame {
 
         //==========Random Block Method Image===========
         g.drawString("Random Placement Method", w / 2 - 750, 550);
-        g.drawImage(randomImage, w / 2 - 750, 570, 300, 300, this);
+        g.drawImage(randomImage, w / 2 - 750, 570, newWidth, newHeight, this);
 
         //==========Neighboring Method Image===========
         g.drawString("Neighboring Block Method", w / 2 - 175, 550);
-        g.drawImage(neighboringBlockImage, w / 2 - 175, 570, 300, 300, this);
+        g.drawImage(neighboringBlockImage, w / 2 - 175, 570, newWidth, newHeight, this);
 
         //==========Min Cut Method Image===========
         g.drawString("Minimum Error Boundary Cut Method", w / 2 + 400, 550);
-        g.drawImage(inputImage, w / 2 + 400, 570, 300, 300, this);
+        g.drawImage(inputImage, w / 2 + 400, 570, width, height, this);
     }
 }
