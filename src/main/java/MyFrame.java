@@ -4,10 +4,7 @@ import java.awt.image.*;
 import java.lang.String;
 import java.io.*;
 import javax.swing.*;
-
-
 import javax.imageio.ImageIO;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 class MyFrame extends Frame {
     private BufferedImage inputImage;
