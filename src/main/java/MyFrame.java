@@ -82,7 +82,7 @@ class MyFrame extends Frame {
                             inputImage = ImageIO.read(image);
                             randomBlock = ImageQuilting.randomBlock(inputImage, blockSize);
                             newWidth = width * 2;
-                            newHeight = height;
+                            newHeight = height * 2;
                             randomImage = ImageQuilting.randomPlacementImage(inputImage, newWidth, newHeight, blockSize);
                             neighboringBlockImage = ImageQuilting.neighboringBlockPlacementImage(inputImage, newWidth, newHeight, blockSize);
                         } catch (Exception error) {
